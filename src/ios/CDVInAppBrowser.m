@@ -539,28 +539,7 @@
 - (void)createViews
 {
     // We create the views in code for primarily for ease of upgrades and not requiring an external .xib to be included
-
-    CGRect webViewBounds = self.view.bounds;
     BOOL toolbarIsAtBottom = ![_browserOptions.toolbarposition isEqualToString:kInAppBrowserToolbarBarPositionTop];
-    webViewBounds.size.height -= _browserOptions.location ? FOOTER_HEIGHT : TOOLBAR_HEIGHT;
-    self.webView = [[UIWebView alloc] initWithFrame:webViewBounds];
-
-    self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-
-    [self.view addSubview:self.webView];
-    [self.view sendSubviewToBack:self.webView];
-
-    self.webView.delegate = _webViewDelegate;
-    self.webView.backgroundColor = [UIColor whiteColor];
-
-    self.webView.clearsContextBeforeDrawing = YES;
-    self.webView.clipsToBounds = YES;
-    self.webView.contentMode = UIViewContentModeScaleToFill;
-    self.webView.multipleTouchEnabled = YES;
-    self.webView.opaque = YES;
-    self.webView.scalesPageToFit = NO;
-    self.webView.userInteractionEnabled = YES;
-
     self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.spinner.alpha = 1.000;
     self.spinner.autoresizesSubviews = YES;
@@ -648,18 +627,46 @@
     self.backButton.enabled = YES;
     self.backButton.imageInsets = UIEdgeInsetsZero;
 
+
+    self.webView = [self buildWebView];
     // Filter out Navigation Buttons if user requests so
     if (_browserOptions.hidenavigationbuttons) {
       [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton]];
     } else {
-      [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton, self.backButton, fixedSpaceButton, self.forwardButton]];
+    [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton, self.backButton, fixedSpaceButton, self.forwardButton]];
     }
     [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton]];
 
     self.view.backgroundColor = [UIColor grayColor];
+
+    [self.view addSubview:self.webView];
+    [self.view sendSubviewToBack:self.webView];
     [self.view addSubview:self.toolbar];
     [self.view addSubview:self.addressLabel];
     [self.view addSubview:self.spinner];
+}
+
+- (UIWebView*)buildWebView
+{
+    CGRect webViewBounds = self.view.bounds;
+    webViewBounds.size.height -= _browserOptions.location ? FOOTER_HEIGHT : TOOLBAR_HEIGHT;
+
+    UIWebView *webView = [[UIWebView alloc] initWithFrame:webViewBounds];
+
+    webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+
+    webView.delegate = _webViewDelegate;
+    webView.backgroundColor = [UIColor whiteColor];
+
+    webView.clearsContextBeforeDrawing = YES;
+    webView.clipsToBounds = YES;
+    webView.contentMode = UIViewContentModeScaleToFill;
+    webView.multipleTouchEnabled = YES;
+    webView.opaque = YES;
+    webView.scalesPageToFit = NO;
+    webView.userInteractionEnabled = YES;
+
+    return webView;
 }
 
 - (void) setWebViewFrame : (CGRect) frame {
