@@ -545,31 +545,8 @@
     self.closeButton.enabled = YES;
 
     UIBarButtonItem* flexibleSpaceButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-
     UIBarButtonItem* fixedSpaceButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
     fixedSpaceButton.width = 20;
-
-    float toolbarY = toolbarIsAtBottom ? self.view.bounds.size.height - TOOLBAR_HEIGHT : 0.0;
-    CGRect toolbarFrame = CGRectMake(0.0, toolbarY, self.view.bounds.size.width, TOOLBAR_HEIGHT);
-
-    self.toolbar = [[UIToolbar alloc] initWithFrame:toolbarFrame];
-    self.toolbar.alpha = 1.000;
-    self.toolbar.autoresizesSubviews = YES;
-    self.toolbar.autoresizingMask = toolbarIsAtBottom ? (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin) : UIViewAutoresizingFlexibleWidth;
-    self.toolbar.barStyle = UIBarStyleBlackOpaque;
-    self.toolbar.clearsContextBeforeDrawing = NO;
-    self.toolbar.clipsToBounds = NO;
-    self.toolbar.contentMode = UIViewContentModeScaleToFill;
-    self.toolbar.hidden = NO;
-    self.toolbar.multipleTouchEnabled = NO;
-    self.toolbar.opaque = NO;
-    self.toolbar.userInteractionEnabled = YES;
-    if (_browserOptions.toolbarcolor != nil) { // Set toolbar color if user sets it in options
-      self.toolbar.barTintColor = [self colorFromHexString:_browserOptions.toolbarcolor];
-    }
-    if (!_browserOptions.toolbartranslucent) { // Set toolbar translucent to no if user sets it in options
-      self.toolbar.translucent = NO;
-    }
 
     CGFloat labelInset = 5.0;
     float locationBarY = toolbarIsAtBottom ? self.view.bounds.size.height - FOOTER_HEIGHT : self.view.bounds.size.height - LOCATIONBAR_HEIGHT;
@@ -616,13 +593,13 @@
 
     self.webView = [self buildWebView];
     self.spinner = [self buildSpinner];
+    self.toolbar = [self buildToolbar];
+    
     // Filter out Navigation Buttons if user requests so
     if (_browserOptions.hidenavigationbuttons) {
       [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton]];
     } else {
-    [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton, self.backButton, fixedSpaceButton, self.forwardButton]];
-    }
-    [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton]];
+      [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton, self.backButton, fixedSpaceButton, self.forwardButton]];
 
     self.view.backgroundColor = [UIColor grayColor];
 
@@ -676,6 +653,37 @@
     [spinner stopAnimating];
 
     return spinner;
+}
+
+- (UIToolbar*)buildToolbar
+{
+    BOOL toolbarIsAtBottom = ![_browserOptions.toolbarposition isEqualToString:kInAppBrowserToolbarBarPositionTop];
+    float toolbarY = toolbarIsAtBottom ? self.view.bounds.size.height - TOOLBAR_HEIGHT : 0.0;
+    CGRect toolbarFrame = CGRectMake(0.0, toolbarY, self.view.bounds.size.width, TOOLBAR_HEIGHT);
+
+    UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:toolbarFrame];
+
+    toolbar.alpha = 1.000;
+    toolbar.autoresizesSubviews = YES;
+    toolbar.autoresizingMask = toolbarIsAtBottom ? (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin) : UIViewAutoresizingFlexibleWidth;
+    toolbar.barStyle = [_browserOptions.toolbarstyle isEqualToString:kInAppBrowserToolbarStyleBlack] ? UIBarStyleBlack : UIBarStyleDefault;
+    toolbar.clearsContextBeforeDrawing = NO;
+    toolbar.clipsToBounds = NO;
+    toolbar.contentMode = UIViewContentModeScaleToFill;
+    toolbar.hidden = NO;
+    toolbar.multipleTouchEnabled = NO;
+    toolbar.opaque = NO;
+    toolbar.userInteractionEnabled = YES;
+    
+    if (_browserOptions.toolbarcolor != nil) { // Set toolbar color if user sets it in options
+      toolbar.barTintColor = [self colorFromHexString:_browserOptions.toolbarcolor];
+    }
+    if (!_browserOptions.toolbartranslucent) { // Set toolbar translucent to no if user sets it in options
+      toolbar.translucent = NO;
+    }
+
+
+    return toolbar;
 }
 
 - (void) setWebViewFrame : (CGRect) frame {
