@@ -113,5 +113,9 @@
 @interface CDVInAppBrowserNavigationController : UINavigationController
 
 @property (nonatomic, weak) id <CDVScreenOrientationDelegate> orientationDelegate;
+@property (nonatomic, strong) IBOutlet UIToolbar* bgToolbar;
+
+- (void)setBgToolbarStyle:(UIBarStyle)style;
 
 @end
+
