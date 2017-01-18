@@ -628,7 +628,6 @@
     toolbar.alpha = 1.000;
     toolbar.autoresizesSubviews = YES;
     toolbar.autoresizingMask = toolbarIsAtBottom ? (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin) : UIViewAutoresizingFlexibleWidth;
-    toolbar.barStyle = toolbarIsDark ? UIBarStyleBlack : UIBarStyleDefault;
     toolbar.clearsContextBeforeDrawing = NO;
     toolbar.clipsToBounds = NO;
     toolbar.contentMode = UIViewContentModeScaleToFill;
@@ -636,6 +635,13 @@
     toolbar.multipleTouchEnabled = NO;
     toolbar.opaque = NO;
     toolbar.userInteractionEnabled = YES;
+
+    if (toolbarIsDark) {
+        toolbar.barStyle = UIBarStyleBlack;
+        toolbar.tintColor = [UIColor whiteColor];
+    } else {
+        toolbar.barStyle = UIBarStyleDefault;
+    }
 
     if (_browserOptions.toolbarcolor != nil) { // Set toolbar color if user sets it in options
       toolbar.barTintColor = [self colorFromHexString:_browserOptions.toolbarcolor];
