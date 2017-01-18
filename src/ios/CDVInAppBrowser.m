@@ -889,7 +889,8 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return UIStatusBarStyleDefault;
+    BOOL toolbarIsDark = [_browserOptions.toolbarstyle isEqualToString:kInAppBrowserToolbarStyleBlack];
+    return toolbarIsDark ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault;
 }
 
 - (BOOL)prefersStatusBarHidden {
