@@ -539,33 +539,24 @@
 - (void)createViews
 {
     // We create the views in code for primarily for ease of upgrades and not requiring an external .xib to be included
-    self.closeButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(close)];
-    self.closeButton.enabled = YES;
-
     UIBarButtonItem* flexibleSpaceButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     UIBarButtonItem* fixedSpaceButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
     fixedSpaceButton.width = 20;
-
-    NSString* frontArrowString = NSLocalizedString(@"►", nil); // create arrow from Unicode char
-    self.forwardButton = [[UIBarButtonItem alloc] initWithTitle:frontArrowString style:UIBarButtonItemStylePlain target:self action:@selector(goForward:)];
-    self.forwardButton.enabled = YES;
-    self.forwardButton.imageInsets = UIEdgeInsetsZero;
-
-    NSString* backArrowString = NSLocalizedString(@"◄", nil); // create arrow from Unicode char
-    self.backButton = [[UIBarButtonItem alloc] initWithTitle:backArrowString style:UIBarButtonItemStylePlain target:self action:@selector(goBack:)];
-    self.backButton.enabled = YES;
-    self.backButton.imageInsets = UIEdgeInsetsZero;
 
     self.webView = [self buildWebView];
     self.spinner = [self buildSpinner];
     self.addressLabel = [self buildAddressLabel];
     self.toolbar = [self buildToolbar];
-    
+
+    self.closeButton = [self buildCloseButton];
+    self.forwardButton = [self buildForwardButton];
+    self.backButton = [self buildBackButton];
+
     // Filter out Navigation Buttons if user requests so
     if (_browserOptions.hidenavigationbuttons) {
       [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton]];
     } else {
-      [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton, self.backButton, fixedSpaceButton, self.forwardButton]];
+    [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton, self.backButton, fixedSpaceButton, self.forwardButton]];
 
     self.view.backgroundColor = [UIColor grayColor];
 
@@ -632,7 +623,7 @@
     toolbar.alpha = 1.000;
     toolbar.autoresizesSubviews = YES;
     toolbar.autoresizingMask = toolbarIsAtBottom ? (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin) : UIViewAutoresizingFlexibleWidth;
-    toolbar.barStyle = [_browserOptions.toolbarstyle isEqualToString:kInAppBrowserToolbarStyleBlack] ? UIBarStyleBlack : UIBarStyleDefault;
+    toolbar.barStyle = UIBarStyleBlack;
     toolbar.clearsContextBeforeDrawing = NO;
     toolbar.clipsToBounds = NO;
     toolbar.contentMode = UIViewContentModeScaleToFill;
@@ -640,7 +631,7 @@
     toolbar.multipleTouchEnabled = NO;
     toolbar.opaque = NO;
     toolbar.userInteractionEnabled = YES;
-    
+
     if (_browserOptions.toolbarcolor != nil) { // Set toolbar color if user sets it in options
       toolbar.barTintColor = [self colorFromHexString:_browserOptions.toolbarcolor];
     }
@@ -651,7 +642,6 @@
 
     return toolbar;
 }
-
 
 - (UILabel*)buildAddressLabel
 {
@@ -689,6 +679,33 @@
     addressLabel.userInteractionEnabled = NO;
 
     return addressLabel;
+}
+
+- (UIBarButtonItem*)buildCloseButton
+{
+    UIBarButtonItem *closeButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(close)];
+    closeButton.enabled = YES;
+    return closeButton;
+}
+
+- (UIBarButtonItem*)buildForwardButton
+{
+    NSString* frontArrowString = NSLocalizedString(@"►", nil); // create arrow from Unicode char
+    UIBarButtonItem *forwardButton = [[UIBarButtonItem alloc] initWithTitle:frontArrowString style:UIBarButtonItemStylePlain target:self action:@selector(goForward:)];
+    forwardButton.enabled = YES;
+    forwardButton.imageInsets = UIEdgeInsetsZero;
+
+    return forwardButton;
+}
+
+- (UIBarButtonItem*)buildBackButton
+{
+    NSString* backArrowString = NSLocalizedString(@"◄", nil); // create arrow from Unicode char
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:backArrowString style:UIBarButtonItemStylePlain target:self action:@selector(goBack:)];
+    backButton.enabled = YES;
+    backButton.imageInsets = UIEdgeInsetsZero;
+
+    return backButton;
 }
 
 - (void) setWebViewFrame : (CGRect) frame {
